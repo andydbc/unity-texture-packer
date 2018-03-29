@@ -1,3 +1,3 @@
 # unity-texture-packer
 
-![screenshot](Screenshots/screen0.gif)
+![screenshot](Screenshots/screen00.gif)
