@@ -3,15 +3,15 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-public class ChannelPackerWindow : EditorWindow
+public class TexturePackerWindow : EditorWindow
 {
     string _viewTitle = "Texture Channel Packer";
     Vector2 _viewScrollPos;
     
     List<string> _errorList = new List<string>();
 
-    List<ChannelPackerInput> _textureInputs = new List<ChannelPackerInput>();
-    public List<ChannelPackerInput> Inputs() { return _textureInputs; }
+    List<TexturePackerInput> _textureInputs = new List<TexturePackerInput>();
+    public List<TexturePackerInput> Inputs() { return _textureInputs; }
 
     Material _material = null;
 
@@ -34,7 +34,7 @@ public class ChannelPackerWindow : EditorWindow
     [MenuItem("Window/Texture Channel Packer")]
     static void ShowWindow()
     {
-        ChannelPackerWindow window = GetWindow<ChannelPackerWindow>();
+        TexturePackerWindow window = GetWindow<TexturePackerWindow>();
 
         Vector2 minSize = new Vector2(300, 450);
         window.minSize = minSize;
@@ -60,7 +60,7 @@ public class ChannelPackerWindow : EditorWindow
 
         if (_material == null)
         {
-            var shader = Shader.Find("Hidden/ChannelPacker");
+            var shader = Shader.Find("Hidden/TexturePacker");
             _material = new Material(shader);
         }
     }
@@ -74,9 +74,9 @@ public class ChannelPackerWindow : EditorWindow
     {
         _viewScrollPos = EditorGUILayout.BeginScrollView(_viewScrollPos, false, false);
 
-        GUILayout.Label(_viewTitle, ChannelPackerStyles.Heading);
+        GUILayout.Label(_viewTitle, TexturePackerStyles.Heading);
 
-        GUILayout.BeginVertical(ChannelPackerStyles.Section);
+        GUILayout.BeginVertical(TexturePackerStyles.Section);
 
         DrawInputSelection();
 
@@ -88,7 +88,7 @@ public class ChannelPackerWindow : EditorWindow
 
         using (new EditorGUI.DisabledScope(!ValidityCheck()))
         {
-            if (GUILayout.Button("Generate Texture", ChannelPackerStyles.Button))
+            if (GUILayout.Button("Generate Texture", TexturePackerStyles.Button))
             {
                 string savePath = string.Empty;
                 switch (_textureFormat)
@@ -97,7 +97,7 @@ public class ChannelPackerWindow : EditorWindow
                         savePath = EditorUtility.SaveFilePanel("Save", Application.dataPath, "texture.png", "PNG");
                         if(savePath.Length!=0)
                         {
-                            Texture2D result = ChannelPackerUtils.GenerateTexture(_resolution, _resolution, _material);
+                            Texture2D result = TexturePackerUtils.GenerateTexture(_resolution, _resolution, _material);
                             File.WriteAllBytes(savePath, result.EncodeToPNG());
                             AssetDatabase.Refresh();
                         }
@@ -106,7 +106,7 @@ public class ChannelPackerWindow : EditorWindow
                         savePath = EditorUtility.SaveFilePanel("Save", Application.dataPath, "texture.exr", "EXR");
                         if (savePath.Length != 0)
                         {
-                            Texture2D result = ChannelPackerUtils.GenerateTexture(_resolution, _resolution, _material);
+                            Texture2D result = TexturePackerUtils.GenerateTexture(_resolution, _resolution, _material);
                             File.WriteAllBytes(savePath, result.EncodeToEXR());
                             AssetDatabase.Refresh();
                         }
@@ -148,15 +148,15 @@ public class ChannelPackerWindow : EditorWindow
 
     void DrawInputSelection()
     {
-        GUILayout.Label("Inputs", ChannelPackerStyles.Heading);
-        foreach (ChannelPackerInput input in _textureInputs)
+        GUILayout.Label("Inputs", TexturePackerStyles.Heading);
+        foreach (TexturePackerInput input in _textureInputs)
             input.Draw(this);
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("+"))
         {
-            var newInput = new ChannelPackerInput();
+            var newInput = new TexturePackerInput();
             _textureInputs.Add(newInput);
         }
         GUILayout.FlexibleSpace();
@@ -165,22 +165,22 @@ public class ChannelPackerWindow : EditorWindow
 
     void DrawPreview()
     {
-        GUILayout.Label("Preview", ChannelPackerStyles.Heading);
+        GUILayout.Label("Preview", TexturePackerStyles.Heading);
 
-        GUILayout.BeginVertical(ChannelPackerStyles.Section);
+        GUILayout.BeginVertical(TexturePackerStyles.Section);
 
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
 
         Vector2 previewSize = new Vector2(256, 256);
-        GUILayout.Label("", ChannelPackerStyles.MidBox, GUILayout.Width(previewSize.x), GUILayout.Height(previewSize.y));
+        GUILayout.Label("", TexturePackerStyles.MidBox, GUILayout.Width(previewSize.x), GUILayout.Height(previewSize.y));
         Rect previewRect = GUILayoutUtility.GetLastRect();
         Rect alphaRect = new Rect(previewRect.x + 5, previewRect.y + 5, previewRect.width - 10, previewRect.height - 10);
 
         for (int i = 0; i < 4; ++i)
             SendInputProperties(i);
 
-        Texture2D preview = ChannelPackerUtils.GenerateTexture((int)previewSize.x, (int)previewSize.y, _material);
+        Texture2D preview = TexturePackerUtils.GenerateTexture((int)previewSize.x, (int)previewSize.y, _material);
         EditorGUI.DrawPreviewTexture(alphaRect, preview);
 
         GUILayout.FlexibleSpace();
@@ -191,20 +191,19 @@ public class ChannelPackerWindow : EditorWindow
 
     void DrawOptions()
     {
-        GUILayout.Label("Options", ChannelPackerStyles.Heading);
-        GUILayout.BeginVertical(ChannelPackerStyles.Section);
+        GUILayout.Label("Options", TexturePackerStyles.Heading);
+        GUILayout.BeginVertical(TexturePackerStyles.Section);
         _textureFormat = (TextureFormat)EditorGUILayout.EnumPopup("> Format:", _textureFormat);
         _resolution = EditorGUILayout.IntPopup("> Resolution:", _resolution, _textureResolutionsNames.ToArray(), _textureResolutions.ToArray());
         GUILayout.EndVertical();
     }
 
-    public void RemoveInput(ChannelPackerInput input)
+    public void RemoveInput(TexturePackerInput input)
     {
-        if(_textureInputs.Contains(input))
-        {
-            ClearInputProperties(_textureInputs.IndexOf(input));
-            _textureInputs.Remove(input);
-        }
+        for (int i = 0; i < _textureInputs.Count; ++i)
+            ClearInputProperties(i);
+
+        _textureInputs.Remove(input);
     }
 
     public string GetInputPropertyName(int i, string param)

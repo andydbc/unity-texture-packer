@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChannelPackerUtils
+public class TexturePackerUtils
 {
     public static Texture2D GenerateTexture(int width, int height, Material mat)
     {

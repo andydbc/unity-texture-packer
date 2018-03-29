@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class ChannelPackerStyles {
+public class TexturePackerStyles {
 
     static GUIStyle heading = null;
     public static GUIStyle Heading

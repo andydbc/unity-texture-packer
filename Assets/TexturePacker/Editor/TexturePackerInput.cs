@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [Serializable]
-public class ChannelPackerInput
+public class TexturePackerInput
 {
     Texture2D _texture = null;
     public Texture2D Texture() { return _texture; }
@@ -14,7 +14,7 @@ public class ChannelPackerInput
     private List<bool> _channelsIn = new List<bool>();
     private List<int> _channelOutIndices = new List<int>();
 
-    public ChannelPackerInput()
+    public TexturePackerInput()
     {
         for(int i = 0; i < 4; ++i)
         {
@@ -23,7 +23,7 @@ public class ChannelPackerInput
         }
     }
 
-    public void Draw(ChannelPackerWindow win)
+    public void Draw(TexturePackerWindow win)
     {
         GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
         EditorGUILayout.BeginHorizontal();
@@ -40,8 +40,8 @@ public class ChannelPackerInput
             var menu = new GenericMenu();
             menu.AddItem(new GUIContent("Remove"), false, data =>
             {
-                var channelInput = data as ChannelPackerInput;
-                win.RemoveInput(channelInput);
+                var input = data as TexturePackerInput;
+                win.RemoveInput(input);
 
             }, this);
 
@@ -54,9 +54,9 @@ public class ChannelPackerInput
             if (_fold)
             {
 
-                GUILayout.BeginHorizontal(ChannelPackerStyles.Heading);
+                GUILayout.BeginHorizontal(TexturePackerStyles.Heading);
 
-                GUILayout.BeginVertical(ChannelPackerStyles.Heading);
+                GUILayout.BeginVertical(TexturePackerStyles.Heading);
 
                 GUILayout.Label("Channels Selection:");
 

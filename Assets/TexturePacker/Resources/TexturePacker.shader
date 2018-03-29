@@ -1,4 +1,4 @@
-﻿Shader "Hidden/ChannelPacker"
+﻿Shader "Hidden/TexturePacker"
 {
 	Properties
 	{
