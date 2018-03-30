@@ -1,4 +1,4 @@
-unity-texture-packer ![Status](https://img.shields.io/badge/status-under%20development-yellow.svg) [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](http://mit-license.org)
+unity-texture-packer [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](http://mit-license.org)
 ==========
 
 
