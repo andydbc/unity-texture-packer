@@ -5,14 +5,14 @@ namespace TexPacker
 {
     class TextureItem
     {
-        public TextureEntry entry;
+        public TextureInput input;
         public bool toDelete { get; private set; }
 
         private bool _fold = true;
 
-        public TextureItem(TextureEntry entry)
+        public TextureItem(TextureInput input)
         {
-            this.entry = entry;
+            this.input = input;
         }
 
         private Rect GetFoldRect()
@@ -64,23 +64,24 @@ namespace TexPacker
                     {
                         GUILayout.BeginHorizontal();
 
-                        var activeTexChannel = (TextureChannel)i;
+                        var texChannel = (TextureChannel)i;
 
-                        bool enabled = entry.inputs.GetChannelState(activeTexChannel);
-                        enabled = GUILayout.Toggle(enabled, new GUIContent(" " + channels[i]), GUILayout.Width(60));
-                        entry.inputs.SetChannelState(activeTexChannel, enabled);
+                        var channelInput = input.GetChannelInput(texChannel);
+
+                        channelInput.enabled = GUILayout.Toggle(channelInput.enabled, new GUIContent(" " + channels[i]), GUILayout.Width(60));
 
                         GUILayout.Label(">");
 
-                        TextureChannel output = entry.outputs[(int)activeTexChannel];
-                        output = (TextureChannel)EditorGUILayout.Popup((int)output, channels, GUILayout.Width(80));
-                        entry.outputs[(int)activeTexChannel] = output;
+                        channelInput.output = (TextureChannel)EditorGUILayout.Popup((int)channelInput.output, channels, GUILayout.Width(80));
+
+                        input.SetChannelInput(texChannel, channelInput);
+
                         GUILayout.EndHorizontal();
                     }
 
                     GUILayout.EndVertical();
 
-                    entry.texture = EditorGUILayout.ObjectField(entry.texture, typeof(Texture2D), false, GUILayout.Width(90), GUILayout.Height(80)) as Texture2D;
+                    input.texture = EditorGUILayout.ObjectField(input.texture, typeof(Texture2D), false, GUILayout.Width(90), GUILayout.Height(80)) as Texture2D;
 
                     GUILayout.EndHorizontal();
 

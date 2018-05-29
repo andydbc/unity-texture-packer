@@ -8,9 +8,9 @@ namespace TexPacker
         private readonly string _shaderName = "Hidden/TexturePacker";
         private Material _material;
 
-        private List<TextureEntry> _entries = new List<TextureEntry>();
-        public List<TextureEntry> entries {
-            get { return _entries; }
+        private List<TextureInput> _texInputs = new List<TextureInput>();
+        public List<TextureInput> texInputs {
+            get { return _texInputs; }
         }
 
         public int resolution = 2048;
@@ -24,14 +24,14 @@ namespace TexPacker
             }
         }
 
-        public void Add(TextureEntry entry)
+        public void Add(TextureInput entry)
         {
-            _entries.Add(entry);
+            _texInputs.Add(entry);
         }
 
-        public void Remove(TextureEntry entry)
+        public void Remove(TextureInput input)
         {
-            _entries.Remove(entry);
+            _texInputs.Remove(input);
         }
 
         private string GetPropertyName(int i, string param)
@@ -48,16 +48,48 @@ namespace TexPacker
             }
         }
 
+        private Vector4 GetInputs(TextureInput texInput)
+        {
+            Vector4 states = Vector4.zero;
+
+            for (int i = 0; i < 4; ++i)
+            {
+                var state = texInput.GetChannelInput((TextureChannel)i).enabled;
+                states[i] = state ? 1f : 0f;
+            }
+
+            return states;
+        }
+
+        private Matrix4x4 GetOutputs(TextureInput texInput)
+        {
+            Matrix4x4 m = Matrix4x4.zero;
+
+            for (int i = 0; i < 4; ++i)
+            {
+                Vector4 inChannel = Vector4.zero;
+                var output = texInput.GetChannelInput((TextureChannel)i).output;
+                inChannel[(int)output] = 1f;
+                m.SetRow(i, inChannel);
+            }
+
+            return m;
+        }
+
         public Texture2D Create()
         {
-            var idx = 0;
-            foreach(var entry in _entries)
+            int idx = 0;
+            foreach(var input in _texInputs)
             {
-                _material.SetTexture(GetPropertyName(idx, "Tex"), entry.texture);
-                _material.SetVector(GetPropertyName(idx, "In"), entry.GetInputShaderFormat());
-                _material.SetMatrix(GetPropertyName(idx, "Out"), entry.GetOutputShaderFormat());
+                var Tex = input.texture;
+                _material.SetTexture(GetPropertyName(idx, "Tex"), Tex);
 
-                idx++;
+                var In = GetInputs(input);
+                _material.SetVector(GetPropertyName(idx, "In"), In);
+
+                var Out = GetOutputs(input);
+                _material.SetMatrix(GetPropertyName(idx, "Out"), Out);
+                ++idx;
             }
 
             var texture = TextureUtility.GenerateTexture(resolution, resolution, _material);

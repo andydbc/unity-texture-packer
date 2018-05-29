@@ -57,7 +57,7 @@ namespace TexPacker
             var toDeleteItems = _items.Where(x => x.toDelete==true).ToList();
             foreach (var item in toDeleteItems)
             {
-                _texturePacker.Remove(item.entry);
+                _texturePacker.Remove(item.input);
                 _items.Remove(item);
             }
         }
@@ -79,7 +79,7 @@ namespace TexPacker
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("+"))
             {
-                TextureEntry entry = new TextureEntry();
+                TextureInput entry = new TextureInput();
                 _texturePacker.Add(entry);
                 _items.Add(new TextureItem(entry));
             }
