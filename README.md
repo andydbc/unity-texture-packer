@@ -11,16 +11,19 @@ From Code:
 
 ```cs
 TextureInput texInput00 = new TextureInput();
+TextureInput texInput01 = new TextureInput();
+
 texInput00.texture = Resources.Load<Texture2D>("input00");
-// Input Red into Output Red
+texInput01.texture = Resources.Load<Texture2D>("input01");
+
 var texChanInRed = new TextureChannelInput(TextureChannel.ChannelRed, true);
+var texChanInBlue = new TextureChannelInput(TextureChannel.ChannelBlue, true);
+
+// Input Red into Output Red
 texInput00.SetChannelInput(TextureChannel.ChannelRed, texChanInRed);
 // Input Green into Output Blue
-var texChanInBlue = new TextureChannelInput(TextureChannel.ChannelBlue, true);
 texInput00.SetChannelInput(TextureChannel.ChannelGreen, texChanInBlue);
 
-TextureInput texInput01 = new TextureInput();
-texInput01.texture = Resources.Load<Texture2D>("input01");
 // Input Green into Output Green
 var texChanInGreen =  new TextureChannelInput(TextureChannel.ChannelGreen, true);
 texInput01.SetChannelInput(TextureChannel.ChannelGreen, texChanInGreen);
