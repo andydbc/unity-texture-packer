@@ -2,12 +2,11 @@ unity-texture-packer [![License](https://img.shields.io/badge/License-MIT-lightg
 ==========
 
 
-Utility to merge different texture channels into a final texture output. 
+:hammer: Utility to merge different texture channels into a final texture output. 
 
 ![screenshot](Screenshots/screen00.gif)
 
-## Usage
-From Code:
+## Example in code :floppy_disk:
 
 ```cs
 TextureInput texInput00 = new TextureInput();
@@ -35,6 +34,10 @@ texPacker.Add(texInput01);
 
 Texture2D texMerged = texPacker.Create();
 ```
+
+### License :pencil:
+
+MIT. See [LICENSE](https://github.com/andydbc/unity-texture-packer/blob/master/LICENSE) for details.
 
 ## Note
 This is still under development and may be buggy.
