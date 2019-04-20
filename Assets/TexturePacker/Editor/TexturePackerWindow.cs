@@ -95,7 +95,7 @@ namespace TexPacker
 
             GUILayout.Label("Options", TexturePackerStyles.Heading);
             GUILayout.BeginVertical(TexturePackerStyles.Section);
-            _textureFormat = (TextureFormat)EditorGUILayout.EnumPopup("> Format:", _textureFormat);
+            textureFormat = (TextureFormat)EditorGUILayout.EnumPopup("> Format:", textureFormat);
             _texturePacker.resolution = EditorGUILayout.IntPopup("> Resolution:", _texturePacker.resolution, _textureResolutionsNames.ToArray(), _textureResolutions.ToArray());
             GUILayout.EndVertical();
 
