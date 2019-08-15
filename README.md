@@ -6,33 +6,22 @@ unity-texture-packer [![License](https://img.shields.io/badge/License-MIT-lightg
 
 ![screenshot](Screenshots/screen00.gif)
 
-### Example in code :floppy_disk:
+## Install
 
-```cs
-TextureInput texInput00 = new TextureInput();
-TextureInput texInput01 = new TextureInput();
+Make sure the Git client is installed on your marchine and that you have added the Git executable path to your PATH environment variable.
 
-texInput00.texture = Resources.Load<Texture2D>("input00");
-texInput01.texture = Resources.Load<Texture2D>("input01");
+Go in %ProjectFolder%/Packages/ and open the "manifest.json" file.
 
-var texChanInRed = new TextureChannelInput(TextureChannel.ChannelRed, true);
-var texChanInBlue = new TextureChannelInput(TextureChannel.ChannelBlue, true);
+in the "dependencies" section add:
 
-// Input Red into Output Red
-texInput00.SetChannelInput(TextureChannel.ChannelRed, texChanInRed);
-// Input Green into Output Blue
-texInput00.SetChannelInput(TextureChannel.ChannelGreen, texChanInBlue);
-
-// Input Green into Output Green
-var texChanInGreen =  new TextureChannelInput(TextureChannel.ChannelGreen, true);
-texInput01.SetChannelInput(TextureChannel.ChannelGreen, texChanInGreen);
-
-TexturePacker texPacker = new TexturePacker();
-
-texPacker.Add(texInput00);
-texPacker.Add(texInput01);
-
-Texture2D texMerged = texPacker.Create();
+```sh
+{
+  "dependencies": {
+      ...
+      "ca.andydbc.unity-texture-packer":"https://github.com/andydbc/unity-texture-packer.git#dev-package"
+      ...
+  }
+}
 ```
 
 ### Note
