@@ -1,5 +1,5 @@
 {
-    "name": "unity-channel-packager",
+    "name": "unity-texture-packer",
     "displayName": "Texture Channel Packer",
     "version": "0.0.1",
     "unity": "2019.2",
