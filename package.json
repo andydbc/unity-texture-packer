@@ -1,8 +1,11 @@
 {
-    "name": "unity-texture-packer",
-    "displayName": "Texture Channel Packer",
-    "version": "0.0.1",
-    "unity": "2019.2",
+    "author": "Andy Duboc",
+    "dependencies": {},
     "description": "Tool used to merge arbitary texture channels in one texture ouput.",
-    "dependencies": {}
+    "displayName": "Texture Channel Packer",
+    "license":"MIT",
+    "name": "ca.andydbc.unity-texture-packer",
+    "unity": "2019.2",
+    "unityRelease":"0f1",
+    "version": "0.0.1"
 }
