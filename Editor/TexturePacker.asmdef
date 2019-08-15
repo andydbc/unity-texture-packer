@@ -1,0 +1,12 @@
+{
+    "name": "TexturePacker.Editor",
+    "references": [
+        "TexturePacker.Runtime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

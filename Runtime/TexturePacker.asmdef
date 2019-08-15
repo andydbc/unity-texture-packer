@@ -1,0 +1,7 @@
+{
+    "name": "TexturePacker.Runtime",
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
