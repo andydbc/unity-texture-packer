@@ -18,7 +18,7 @@ in the "dependencies" section add:
 {
   "dependencies": {
       ...
-      "ca.andydbc.unity-texture-packer":"https://github.com/andydbc/unity-texture-packer.git#dev-package"
+      "ca.andydbc.unity-texture-packer":"https://github.com/andydbc/unity-texture-packer.git"
       ...
   }
 }
