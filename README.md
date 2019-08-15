@@ -28,10 +28,10 @@ Find more information about this [here](https://docs.unity3d.com/Manual/upm-git.
 
 The tool is located under "Window" and is called "ChannelPacker"
 
-### Note
+## Note
 
 This is still under development and may be buggy.
 
-### License :pencil:
+## License
 
 MIT. See [LICENSE](https://github.com/andydbc/unity-texture-packer/blob/master/LICENSE) for details.
