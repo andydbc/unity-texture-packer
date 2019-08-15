@@ -26,7 +26,7 @@ in the "dependencies" section add:
 
 Find more information about this [here](https://docs.unity3d.com/Manual/upm-git.html).
 
-The tool is located under "Window" and is called "ChannelPacker"
+The tool is located under "Window" and is called "Channel Packer"
 
 ## Note
 
