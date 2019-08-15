@@ -10,7 +10,7 @@ namespace TexPacker
     {
         private readonly string _windowTitle = "Channel Packer";
         private readonly Vector2 _windowSize = new Vector2(300, 450);
-
+        private readonly int _maxInputCount = 4;
         private readonly int _textureSupportedResolutionMin = 64;
         private readonly int _textureSupportedResolutionMax = 8192;
 
@@ -73,16 +73,24 @@ namespace TexPacker
 
             GUILayout.Label("Inputs", TexturePackerStyles.Heading);
             foreach (TextureItem item in _items)
+            {
                 item.Draw();
+            }
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
+
+            GUI.enabled = _items.Count < _maxInputCount;
+
             if (GUILayout.Button("+"))
             {
                 TextureInput entry = new TextureInput();
                 _texturePacker.Add(entry);
                 _items.Add(new TextureItem(entry));
             }
+
+            GUI.enabled = true;
+
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
 
