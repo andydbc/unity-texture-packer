@@ -5,6 +5,8 @@ namespace TexPacker
 {
     public class TexturePreview
     {
+        private int toolbarItem = 0;
+
         public void Draw(TexturePacker texPacker)
         {
             GUILayout.Label("Preview", TexturePackerStyles.Heading);
@@ -22,10 +24,18 @@ namespace TexPacker
             texPacker.ClearProperties();
 
             Texture2D preview = texPacker.Create();
-            EditorGUI.DrawPreviewTexture(alphaRect, preview);
+            preview.alphaIsTransparency = true;
+
+            if(toolbarItem == 0)
+                EditorGUI.DrawPreviewTexture(alphaRect, preview);
+            else
+                EditorGUI.DrawTextureAlpha(alphaRect, preview);
 
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+
+            string[] toolbarItems = { "RBG", "Alpha" };
+            toolbarItem = GUILayout.Toolbar(toolbarItem, toolbarItems);
 
             GUILayout.EndVertical();
         }
