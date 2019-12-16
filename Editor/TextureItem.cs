@@ -31,7 +31,7 @@ namespace TexPacker
 
             _fold = EditorGUI.Foldout(GetFoldRect(), _fold, "Input");
 
-            var gearStyle = new GUIStyle("Icon.Options");
+            var gearStyle = new GUIStyle();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button(gearStyle.normal.background, new GUIStyle("IconButton")))
             {
