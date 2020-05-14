@@ -17,7 +17,6 @@ namespace TexPacker
         Vector2 _windowScrollPos;
 
         private TextureFormat _textureFormat = TextureFormat.PNG;
-        public TextureFormat textureFormat { get; private set; }
 
         private TexturePacker _texturePacker = new TexturePacker();
 
@@ -103,20 +102,20 @@ namespace TexPacker
 
             GUILayout.Label("Options", TexturePackerStyles.Heading);
             GUILayout.BeginVertical(TexturePackerStyles.Section);
-            textureFormat = (TextureFormat)EditorGUILayout.EnumPopup("> Format:", textureFormat);
+            _textureFormat = (TextureFormat)EditorGUILayout.EnumPopup("> Format:", _textureFormat);
             _texturePacker.resolution = EditorGUILayout.IntPopup("> Resolution:", _texturePacker.resolution, _textureResolutionsNames.ToArray(), _textureResolutions.ToArray());
             GUILayout.EndVertical();
 
             if (GUILayout.Button("Generate Texture", TexturePackerStyles.Button))
             {
-                string savePath = EditorUtility.SaveFilePanel("Save", Application.dataPath, "texture.png", textureFormat.ToString());
+                string savePath = EditorUtility.SaveFilePanel("Save", Application.dataPath, "texture.png", _textureFormat.ToString());
                 if (savePath != string.Empty)
                 {
                     Texture2D output = _texturePacker.Create();
 
-                    if(textureFormat == TextureFormat.JPG)
+                    if(_textureFormat == TextureFormat.JPG)
                         File.WriteAllBytes(savePath, output.EncodeToJPG());
-                    else if(textureFormat == TextureFormat.PNG)
+                    else if(_textureFormat == TextureFormat.PNG)
                         File.WriteAllBytes(savePath, output.EncodeToPNG());
                     else
                         File.WriteAllBytes(savePath, output.EncodeToEXR());
