@@ -10,7 +10,7 @@
 		_Input00In ("Input00 In", Vector) = (0,0,0,0)
 		_Input01In ("Input01 In", Vector) = (0,0,0,0)
 		_Input02In ("Input02 In", Vector) = (0,0,0,0)
-		_Input02In ("Input02 In", Vector) = (0,0,0,0)
+		_Input03In ("Input03 In", Vector) = (0,0,0,0)
 	}
 	SubShader
 	{
