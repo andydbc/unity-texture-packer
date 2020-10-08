@@ -61,6 +61,19 @@ namespace TexPacker
             return states;
         }
 
+        private Vector4 GetInverts(TextureInput texInput)
+        {
+            Vector4 states = Vector4.zero;
+
+            for (int i = 0; i < 4; ++i)
+            {
+                var state = texInput.GetChannelInput((TextureChannel)i).invert;
+                states[i] = state ? 1f : 0f;
+            }
+
+            return states;
+        }
+
         private Matrix4x4 GetOutputs(TextureInput texInput)
         {
             Matrix4x4 m = Matrix4x4.zero;
@@ -86,6 +99,9 @@ namespace TexPacker
 
                 var In = GetInputs(input);
                 _material.SetVector(GetPropertyName(idx, "In"), In);
+
+                var Inv = GetInverts(input);
+                _material.SetVector(GetPropertyName(idx, "Inv"), Inv);
 
                 var Out = GetOutputs(input);
                 _material.SetMatrix(GetPropertyName(idx, "Out"), Out);

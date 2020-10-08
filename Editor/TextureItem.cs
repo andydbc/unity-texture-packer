@@ -73,6 +73,8 @@ namespace TexPacker
                         GUILayout.Label(">");
 
                         channelInput.output = (TextureChannel)EditorGUILayout.Popup((int)channelInput.output, channels, GUILayout.Width(80));
+                        
+                        channelInput.invert = GUILayout.Toggle(channelInput.invert, "Invert");
 
                         input.SetChannelInput(texChannel, channelInput);
 
