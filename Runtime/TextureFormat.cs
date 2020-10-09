@@ -4,6 +4,7 @@
     {
         JPG,
         PNG,
-        EXR
+        EXR,
+        TGA
     }
 }
