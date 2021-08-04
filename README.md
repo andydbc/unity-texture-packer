@@ -8,7 +8,7 @@ unity-texture-packer [![License](https://img.shields.io/badge/License-MIT-lightg
 
 # Installation
 
-#####Install the latest *stable release* by following these steps:
+#### Install the latest *stable release* by following these steps:
 
 1. Click on **Window/Package Manager**.
 2. Click on the little + icon.
