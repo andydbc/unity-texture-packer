@@ -6,35 +6,14 @@ unity-texture-packer [![License](https://img.shields.io/badge/License-MIT-lightg
 
 ![screenshot](Screenshots/screen00.gif)
 
-## Install
+# Installation
 
-### Using Git
+#####Install the latest *stable release* by following these steps:
 
-Make sure the Git client is installed on your marchine and that you have added the Git executable path to your PATH environment variable.
-
-Go in %ProjectFolder%/Packages/ and open the "manifest.json" file.
-
-in the "dependencies" section add:
-
-```sh
-{
-  "dependencies": {
-      ...
-      "ca.andydbc.unity-texture-packer":"https://github.com/andydbc/unity-texture-packer.git#0.1.0"
-      ...
-  }
-}
-```
-
-Find more information about this [here](https://docs.unity3d.com/Manual/upm-git.html).
-
-### Manual 
-
-Dowload this repository as a zip file, extract the archive. <br>
-In Unity, go in "Window" -> "Package Manager"  -> "Add Package from disk"<br>
-Select the "package.json" file located at the root of the package folder.<br>
-
-The tool is located under "Window" and is called "Channel Packer"
+1. Click on **Window/Package Manager**.
+2. Click on the little + icon.
+3. Click on button that says **Add Package from git URL**.
+4. Put in `https://github.com/Walter-Hulsebos/unity-texture-packer.git`
 
 ## Note
 
