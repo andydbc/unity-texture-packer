@@ -12,10 +12,10 @@ namespace TexPacker
 
         public TextureInput()
         {
-            _inputs[TextureChannel.ChannelRed]      = new TextureChannelInput();
-            _inputs[TextureChannel.ChannelGreen]    = new TextureChannelInput();
-            _inputs[TextureChannel.ChannelBlue]     = new TextureChannelInput();
-            _inputs[TextureChannel.ChannelAlpha]    = new TextureChannelInput();
+            _inputs[TextureChannel.ChannelRed]      = new TextureChannelInput() { output = TextureChannel.ChannelRed };
+            _inputs[TextureChannel.ChannelGreen]    = new TextureChannelInput() { output = TextureChannel.ChannelGreen };
+            _inputs[TextureChannel.ChannelBlue]     = new TextureChannelInput() { output = TextureChannel.ChannelBlue };
+            _inputs[TextureChannel.ChannelAlpha]    = new TextureChannelInput() { output = TextureChannel.ChannelAlpha };
         }
 
         public TextureChannelInput GetChannelInput(TextureChannel channel)
