@@ -108,7 +108,17 @@ namespace TexPacker
 
             if (GUILayout.Button("Generate Texture", TexturePackerStyles.Button))
             {
-                string savePath = EditorUtility.SaveFilePanel("Save", Application.dataPath, "texture.png", _textureFormat.ToString());
+                string defaultPath = Application.dataPath;
+                if(_texturePacker.texInputs.Count > 0 && _texturePacker.texInputs[0].texture != null)
+                {
+                    string path = AssetDatabase.GetAssetPath(_texturePacker.texInputs[0].texture);
+                    if(path != null && !string.IsNullOrEmpty(path))
+                    {
+                        path = Path.Combine(Application.dataPath, "..", path);
+                        defaultPath = Path.GetDirectoryName(path);
+                    }
+                }
+                string savePath = EditorUtility.SaveFilePanel("Save", defaultPath, "texture.png", _textureFormat.ToString());
                 if (savePath != string.Empty)
                 {
                     Texture2D output = _texturePacker.Create();
