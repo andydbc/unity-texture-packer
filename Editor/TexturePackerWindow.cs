@@ -124,11 +124,14 @@ namespace TexPacker
                     Texture2D output = _texturePacker.Create();
 
                     if(_textureFormat == TextureFormat.JPG)
-                        File.WriteAllBytes(savePath, output.EncodeToJPG());
+                        File.WriteAllBytes(savePath, bytes: output.EncodeToJPG());
                     else if(_textureFormat == TextureFormat.PNG)
-                        File.WriteAllBytes(savePath, output.EncodeToPNG());
-                    else
-                        File.WriteAllBytes(savePath, output.EncodeToEXR());
+                        File.WriteAllBytes(savePath, bytes: output.EncodeToPNG());
+                    else if(_textureFormat == TextureFormat.TGA)
+                        File.WriteAllBytes(savePath, bytes: output.EncodeToTGA());
+                    else if(_textureFormat == TextureFormat.EXR)
+                        File.WriteAllBytes(savePath, bytes: output.EncodeToEXR());
+                    else Debug.LogError(message: "Texture Format not supported!");
 
                     AssetDatabase.Refresh();
                 }
