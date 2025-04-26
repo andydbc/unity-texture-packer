@@ -13,7 +13,17 @@ namespace TexPacker
             get { return _texInputs; }
         }
 
-        public int resolution = 2048;
+        public Vector2Int texSize = new Vector2Int(2048, 2048);
+
+        private int _resolution;
+        public int resolution {
+            get { return _resolution; }
+            set
+            {
+                _resolution = value;
+                texSize = Vector2Int.one * value;
+            }
+        }
 
         public void Initialize()
         {
@@ -108,7 +118,7 @@ namespace TexPacker
                 ++idx;
             }
 
-            var texture = TextureUtility.GenerateTexture(resolution, resolution, _material);
+            var texture = TextureUtility.GenerateTexture(texSize.x, texSize.y, _material);
 
             return texture;
         }
