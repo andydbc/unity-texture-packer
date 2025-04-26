@@ -115,9 +115,15 @@ namespace TexPacker
 
             if (_useCustomTexSize)
             {
-                int width = Mathf.Abs(EditorGUILayout.IntField("> Texture width:", _texturePacker.texSize.x));
-                int height = Mathf.Abs(EditorGUILayout.IntField("> Texture height:", _texturePacker.texSize.y));
-                _texturePacker.texSize = new Vector2Int(width, height);
+                if (_texturePacker.texInputs.Count > 0)
+                {
+                    Texture firstInputTex = _texturePacker.texInputs[0].texture;
+                    _texturePacker.texSize.x = firstInputTex.width;
+                    _texturePacker.texSize.y = firstInputTex.height;
+                }
+
+                _texturePacker.texSize.x = Mathf.Abs(EditorGUILayout.IntField("> Texture width:", _texturePacker.texSize.x));
+                _texturePacker.texSize.y = Mathf.Abs(EditorGUILayout.IntField("> Texture height:", _texturePacker.texSize.y));
 
                 if (_texturePacker.texInputs.Count > 0)
                 {
