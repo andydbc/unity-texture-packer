@@ -26,6 +26,8 @@ namespace TexPacker
         private List<TextureItem> _items = new List<TextureItem>();
         private TexturePreview _preview;
 
+        private bool _useCustomTexSize = false;
+
         [MenuItem("Window/Channel Packer")]
         static void Open()
         {
@@ -93,17 +95,30 @@ namespace TexPacker
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
 
-            int prevRes = _texturePacker.resolution;
+            Vector2Int prevTexSize = _texturePacker.texSize;
             _texturePacker.resolution = 128;
 
             _preview.Draw(_texturePacker);
 
-            _texturePacker.resolution = prevRes;
+            _texturePacker.texSize = prevTexSize;
 
             GUILayout.Label("Options", TexturePackerStyles.Heading);
             GUILayout.BeginVertical(TexturePackerStyles.Section);
             _textureFormat = (TextureFormat)EditorGUILayout.EnumPopup("> Format:", _textureFormat);
-            _texturePacker.resolution = EditorGUILayout.IntPopup("> Resolution:", _texturePacker.resolution, _textureResolutionsNames.ToArray(), _textureResolutions.ToArray());
+
+            _useCustomTexSize = EditorGUILayout.Toggle("> Custom texture size:", _useCustomTexSize);
+
+            if (_useCustomTexSize)
+            {
+                int width = EditorGUILayout.IntField("> Texture width:", _texturePacker.texSize.x);
+                int height = EditorGUILayout.IntField("> Texture height:", _texturePacker.texSize.y);
+                _texturePacker.texSize = new Vector2Int(width, height);
+            }
+            else
+            {
+                _texturePacker.texSize = Vector2Int.one * EditorGUILayout.IntPopup("> Resolution:", _texturePacker.resolution, _textureResolutionsNames.ToArray(), _textureResolutions.ToArray());
+            }
+
             GUILayout.EndVertical();
 
             if (GUILayout.Button("Generate Texture", TexturePackerStyles.Button))
