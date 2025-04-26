@@ -27,6 +27,7 @@ namespace TexPacker
         private TexturePreview _preview;
 
         private bool _useCustomTexSize = false;
+        private bool _overrideDefaultTextSize = true;
 
         [MenuItem("Window/Channel Packer")]
         static void Open()
@@ -115,10 +116,11 @@ namespace TexPacker
 
             if (_useCustomTexSize)
             {
-                if (_texturePacker.texInputs.Count > 0)
+                if (_overrideDefaultTextSize && _texturePacker.texInputs.Count == 1)
                 {
                     SetTexSizeFromInput(_texturePacker.texInputs[0]);
                 }
+                _overrideDefaultTextSize = false;
 
                 _texturePacker.texSize.x = Mathf.Abs(EditorGUILayout.IntField("> Texture width:", _texturePacker.texSize.x));
                 _texturePacker.texSize.y = Mathf.Abs(EditorGUILayout.IntField("> Texture height:", _texturePacker.texSize.y));
@@ -143,6 +145,7 @@ namespace TexPacker
             else
             {
                 _texturePacker.texSize = Vector2Int.one * EditorGUILayout.IntPopup("> Resolution:", _texturePacker.resolution, _textureResolutionsNames.ToArray(), _textureResolutions.ToArray());
+                _overrideDefaultTextSize = true;
             }
 
             GUILayout.EndVertical();
