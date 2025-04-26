@@ -117,9 +117,7 @@ namespace TexPacker
             {
                 if (_texturePacker.texInputs.Count > 0)
                 {
-                    Texture firstInputTex = _texturePacker.texInputs[0].texture;
-                    _texturePacker.texSize.x = firstInputTex.width;
-                    _texturePacker.texSize.y = firstInputTex.height;
+                    SetTexSizeFromInput(_texturePacker.texInputs[0]);
                 }
 
                 _texturePacker.texSize.x = Mathf.Abs(EditorGUILayout.IntField("> Texture width:", _texturePacker.texSize.x));
