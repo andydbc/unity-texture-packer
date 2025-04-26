@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -40,7 +40,7 @@ namespace TexPacker
             minSize = _windowSize;
             titleContent = new GUIContent(_windowTitle);
 
-            for(int i = _textureSupportedResolutionMin; i <= _textureSupportedResolutionMax; i *= 2)
+            for (int i = _textureSupportedResolutionMin; i <= _textureSupportedResolutionMax; i *= 2)
             {
                 _textureResolutions.Add(i);
                 _textureResolutionsNames.Add(i.ToString());
@@ -55,12 +55,17 @@ namespace TexPacker
             if (_items.Count == 0)
                 return;
 
-            var toDeleteItems = _items.Where(x => x.toDelete==true).ToList();
+            var toDeleteItems = _items.Where(x => x.toDelete == true).ToList();
             foreach (var item in toDeleteItems)
             {
                 _texturePacker.Remove(item.input);
                 _items.Remove(item);
             }
+        }
+
+        private void SetTexSizeFromInput(TextureInput input)
+        {
+            _texturePacker.texSize = input.texture == null ? Vector2Int.zero : new Vector2Int(input.texture.width, input.texture.height);
         }
 
         private void OnGUI()
@@ -110,9 +115,26 @@ namespace TexPacker
 
             if (_useCustomTexSize)
             {
-                int width = EditorGUILayout.IntField("> Texture width:", _texturePacker.texSize.x);
-                int height = EditorGUILayout.IntField("> Texture height:", _texturePacker.texSize.y);
+                int width = Mathf.Abs(EditorGUILayout.IntField("> Texture width:", _texturePacker.texSize.x));
+                int height = Mathf.Abs(EditorGUILayout.IntField("> Texture height:", _texturePacker.texSize.y));
                 _texturePacker.texSize = new Vector2Int(width, height);
+
+                if (_texturePacker.texInputs.Count > 0)
+                {
+                    EditorGUILayout.Separator();
+                    if (GUILayout.Button("Use size from input"))
+                    {
+                        var menu = new GenericMenu();
+                        for (int i = 0; i < _texturePacker.texInputs.Count; i++)
+                        {
+                            TextureInput input = _texturePacker.texInputs[i];
+                            menu.AddItem(new GUIContent($"Input {i + 1}"), on: false, () => SetTexSizeFromInput(input));
+                        }
+
+                        var dropdownPos = new Rect(Event.current.mousePosition, size: Vector2.zero);
+                        menu.DropDown(dropdownPos);
+                    }
+                }
             }
             else
             {
@@ -124,10 +146,10 @@ namespace TexPacker
             if (GUILayout.Button("Generate Texture", TexturePackerStyles.Button))
             {
                 string defaultPath = Application.dataPath;
-                if(_texturePacker.texInputs.Count > 0 && _texturePacker.texInputs[0].texture != null)
+                if (_texturePacker.texInputs.Count > 0 && _texturePacker.texInputs[0].texture != null)
                 {
                     string path = AssetDatabase.GetAssetPath(_texturePacker.texInputs[0].texture);
-                    if(path != null && !string.IsNullOrEmpty(path))
+                    if (path != null && !string.IsNullOrEmpty(path))
                     {
                         path = Path.Combine(Application.dataPath, "..", path);
                         defaultPath = Path.GetDirectoryName(path);
@@ -138,9 +160,9 @@ namespace TexPacker
                 {
                     Texture2D output = _texturePacker.Create();
 
-                    if(_textureFormat == TextureFormat.JPG)
+                    if (_textureFormat == TextureFormat.JPG)
                         File.WriteAllBytes(savePath, output.EncodeToJPG());
-                    else if(_textureFormat == TextureFormat.PNG)
+                    else if (_textureFormat == TextureFormat.PNG)
                         File.WriteAllBytes(savePath, output.EncodeToPNG());
                     else
                         File.WriteAllBytes(savePath, output.EncodeToEXR());

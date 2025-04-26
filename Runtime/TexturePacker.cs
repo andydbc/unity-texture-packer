@@ -18,7 +18,8 @@ namespace TexPacker
         private int _resolution;
         public int resolution {
             get { return _resolution; }
-            set  {
+            set
+            {
                 _resolution = value;
                 texSize = Vector2Int.one * value;
             }
