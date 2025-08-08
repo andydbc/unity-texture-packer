@@ -12,21 +12,10 @@ unity-texture-packer [![License](https://img.shields.io/badge/License-MIT-lightg
 
 Make sure the Git client is installed on your marchine and that you have added the Git executable path to your PATH environment variable.
 
-Go in %ProjectFolder%/Packages/ and open the "manifest.json" file.
-
-in the "dependencies" section add:
-
-```sh
-{
-  "dependencies": {
-      ...
-      "ca.andydbc.unity-texture-packer":"https://github.com/andydbc/unity-texture-packer.git#0.1.0"
-      ...
-  }
-}
-```
-
-Find more information about this [here](https://docs.unity3d.com/Manual/upm-git.html).
+Open Unity and go to `Window > Package Manager`.  
+In the Package Manager window, click the `+` button and select `Add package from git URL...`.  
+Paste the following URL: `https://github.com/andydbc/unity-texture-packer.git`.  
+Click `Add`.
 
 ### Manual 
 
