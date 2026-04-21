@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace TexPacker
 {
@@ -12,10 +11,10 @@ namespace TexPacker
 
         public TextureInput()
         {
-            _inputs[TextureChannel.ChannelRed]      = new TextureChannelInput() { output = TextureChannel.ChannelRed };
-            _inputs[TextureChannel.ChannelGreen]    = new TextureChannelInput() { output = TextureChannel.ChannelGreen };
-            _inputs[TextureChannel.ChannelBlue]     = new TextureChannelInput() { output = TextureChannel.ChannelBlue };
-            _inputs[TextureChannel.ChannelAlpha]    = new TextureChannelInput() { output = TextureChannel.ChannelAlpha };
+            _inputs[TextureChannel.ChannelRed]   = new TextureChannelInput() { sourceChannel = TextureChannel.ChannelRed,   output = TextureChannel.ChannelRed,   enabled = true };
+            _inputs[TextureChannel.ChannelGreen] = new TextureChannelInput() { sourceChannel = TextureChannel.ChannelGreen, output = TextureChannel.ChannelGreen, enabled = true };
+            _inputs[TextureChannel.ChannelBlue]  = new TextureChannelInput() { sourceChannel = TextureChannel.ChannelBlue,  output = TextureChannel.ChannelBlue,  enabled = true };
+            _inputs[TextureChannel.ChannelAlpha] = new TextureChannelInput() { sourceChannel = TextureChannel.ChannelAlpha, output = TextureChannel.ChannelAlpha, enabled = false };
         }
 
         public TextureChannelInput GetChannelInput(TextureChannel channel)

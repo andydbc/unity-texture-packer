@@ -1,7 +1,6 @@
-unity-texture-packer
-==========
+# unity-texture-packer
 
-Utility to merge different texture channels into a final texture output. 
+Utility to merge different texture channels into a final texture output.
 
 ![screenshot](Screenshots/banner.png)
 
@@ -15,7 +14,7 @@ In Package Manager, press Install package from git url, past the github url:
 https://github.com/andydbc/unity-texture-packer.git
 ```
 
-### npm 
+### npm
 
 ```
 TODO

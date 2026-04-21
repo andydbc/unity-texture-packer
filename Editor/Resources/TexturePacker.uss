@@ -1,0 +1,214 @@
+/* ── Sections ───────────────────────────────────────────────────────── */
+.section {
+    margin: 4px;
+    padding: 0;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.25);
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.section-header {
+    font-size: 13px;
+    -unity-font-style: bold;
+    padding: 5px 8px;
+    -unity-text-align: middle-left;
+    border-bottom-width: 1px;
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.section-body {
+    padding: 4px;
+}
+
+/* ── Texture item ────────────────────────────────────────────────────── */
+.texture-item {
+    border-bottom-width: 1px;
+    border-color: rgba(0, 0, 0, 0.12);
+    margin-bottom: 2px;
+    padding-bottom: 4px;
+}
+
+/* Remove Foldout's built-in left indent so channel rows start flush */
+.texture-item .unity-foldout__content {
+    padding-left: 4px;
+    margin-left: 0;
+}
+
+/* Texture source field – full width at top of foldout */
+.item-texture-field {
+    margin: 2px 0 6px;
+}
+
+/* Channel rows fill available width */
+.channel-row {
+    flex-direction: row;
+    align-items: center;
+    margin: 1px 0;
+    min-height: 20px;
+}
+
+/* Dimmed header label — no flex override, inherits column class sizing */
+.col-header {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.45);
+    -unity-text-align: middle-center;
+    margin-bottom: 2px;
+}
+
+/* Enable checkbox — intrinsic size, spacing on right */
+.channel-enable {
+    flex: 0 0 auto;
+    margin-right: 8px;
+}
+
+/* Source/output dropdowns share available space equally, spaced on both sides */
+.channel-source {
+    flex: 1 1 0;
+    min-width: 60px;
+    margin-right: 8px;
+}
+
+.channel-arrow {
+    flex: 0 0 auto;
+    font-size: 9px;
+    -unity-text-align: middle-center;
+    color: rgba(255, 255, 255, 0.35);
+    margin-right: 8px;
+}
+
+.channel-output {
+    flex: 1 1 0;
+    min-width: 60px;
+    margin-right: 8px;
+}
+
+/* Invert checkbox — intrinsic size, no extra margin */
+.channel-invert {
+    flex: 0 0 auto;
+}
+
+/* Dim non-enable controls when a row is disabled */
+.ch-disabled .channel-source,
+.ch-disabled .channel-arrow,
+.ch-disabled .channel-output,
+.ch-disabled .channel-invert {
+    opacity: 0.35;
+}
+
+.remove-btn {
+    width: 20px;
+    height: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+    font-size: 16px;
+    -unity-text-align: middle-center;
+    border-radius: 3px;
+    align-self: center;
+}
+
+.center-btn {
+    align-self: center;
+
+    width: 100%;
+    padding: 2px;
+    font-size: 18px;
+    margin: 8px;
+}
+
+/* ── Preview ─────────────────────────────────────────────────────────── */
+
+/* Wrapper fills section width; height is set in C# to match width */
+.preview-wrapper {
+    margin: 6px 4px 4px;
+}
+
+.preview-image {
+    width: 100%;
+    /* height driven by GeometryChangedEvent so the preview is always square */
+    background-color: rgb(50, 50, 50);
+}
+
+.preview-toolbar {
+    flex-direction: row;
+    margin: 4px 0;
+}
+
+.preview-toolbar > Button {
+    flex: 1;
+    margin: 0 2px;
+}
+
+.channel-btn {
+    -unity-font-style: bold;
+    opacity: 0.5;
+}
+
+.channel-btn--on {
+    opacity: 1;
+}
+
+.preview-toolbar > Button:focus {
+    border-color: rgba(0, 0, 0, 0);
+}
+
+/* ── Options ─────────────────────────────────────────────────────────── */
+
+/* Editable fields (Format) — fixed label, flexible control */
+.options-field {
+    flex: 1 1 0;
+    justify-content:flex-start;
+    padding:0;
+    margin:0;
+}
+
+.options-field .unity-base-field__label {
+    width: 80px;
+    min-width: 80px;
+    flex-shrink: 0;
+    padding:0;
+    margin:0;
+}
+
+.options-field .unity-base-field__input {
+    flex: 1 1 0;
+    min-width: 80px;
+}
+
+/* Read-only info rows (Resolution) — matches editable field label width */
+.info-row {
+    flex: 1 1 0;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-items: center;
+}
+
+.info-row__label {
+    width: 80px;
+    min-width: 80px;
+    flex-shrink: 0;
+    padding:0;
+    margin:0;
+}
+
+.info-row__value {
+    flex: 1;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.res-warning {
+    font-size: 10px;
+    color: rgb(220, 180, 60);
+    white-space: normal;
+    margin: 3px 0 2px;
+    padding: 0 2px;
+}
+
+/* ── Generate button ─────────────────────────────────────────────────── */
+.generate-btn {
+    margin: 6px 4px 8px;
+    height: 36px;
+    font-size: 12px;
+    -unity-font-style: bold;
+}
