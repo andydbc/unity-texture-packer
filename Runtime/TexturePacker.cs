@@ -37,6 +37,8 @@ namespace TexPacker
                 _material.SetTexture(GetPropertyName(i, "Tex"), Texture2D.blackTexture);
                 _material.SetVector(GetPropertyName(i, "In"), Vector4.zero);
                 _material.SetMatrix(GetPropertyName(i, "Ch"), Matrix4x4.identity);
+                _material.SetVector(GetPropertyName(i, "Const"), Vector4.zero);
+                _material.SetVector(GetPropertyName(i, "Mode"), Vector4.zero);
             }
         }
 
@@ -81,6 +83,22 @@ namespace TexPacker
             return m;
         }
 
+        private Vector4 GetConstants(TextureInput texInput)
+        {
+            Vector4 v = Vector4.zero;
+            for (int i = 0; i < 4; ++i)
+                v[i] = texInput.GetChannelInput((TextureChannel)i).constantValue;
+            return v;
+        }
+
+        private Vector4 GetModes(TextureInput texInput)
+        {
+            Vector4 v = Vector4.zero;
+            for (int i = 0; i < 4; ++i)
+                v[i] = texInput.GetChannelInput((TextureChannel)i).sourceMode == ChannelSourceMode.Constant ? 1f : 0f;
+            return v;
+        }
+
         public bool HasAlphaOutput()
         {
             foreach (var input in _texInputs)
@@ -100,10 +118,12 @@ namespace TexPacker
             foreach (var input in _texInputs)
             {
                 _material.SetTexture(GetPropertyName(idx, "Tex"), input.texture != null ? input.texture : Texture2D.blackTexture);
-                _material.SetVector(GetPropertyName(idx, "In"),  GetInputs(input));
-                _material.SetVector(GetPropertyName(idx, "Inv"), GetInverts(input));
-                _material.SetMatrix(GetPropertyName(idx, "Out"), GetOutputs(input));
-                _material.SetMatrix(GetPropertyName(idx, "Ch"),  GetInputChannels(input));
+                _material.SetVector(GetPropertyName(idx, "In"),    GetInputs(input));
+                _material.SetVector(GetPropertyName(idx, "Inv"),   GetInverts(input));
+                _material.SetMatrix(GetPropertyName(idx, "Out"),   GetOutputs(input));
+                _material.SetMatrix(GetPropertyName(idx, "Ch"),    GetInputChannels(input));
+                _material.SetVector(GetPropertyName(idx, "Const"), GetConstants(input));
+                _material.SetVector(GetPropertyName(idx, "Mode"),  GetModes(input));
                 ++idx;
             }
             _material.SetFloat("_HasAlphaInput", HasAlphaOutput() ? 1f : 0f);

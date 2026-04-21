@@ -72,6 +72,17 @@ Shader "Hidden/TexturePacker"
 			float4x4 _Input02Ch;
 			float4x4 _Input03Ch;
 
+			// Per-slot constant values and mode (0 = sample texture, 1 = use constant)
+			float4 _Input00Const;
+			float4 _Input01Const;
+			float4 _Input02Const;
+			float4 _Input03Const;
+
+			float4 _Input00Mode;
+			float4 _Input01Mode;
+			float4 _Input02Mode;
+			float4 _Input03Mode;
+
 			float4 _ChannelMask;
 			float _HasAlphaInput;
 
@@ -85,15 +96,16 @@ Shader "Hidden/TexturePacker"
 
 			// Samples tex and routes channels according to ch (source selector),
 			// e (enable mask), inv (invert mask), and out_m (output routing matrix).
-			float4 PackChannels(sampler2D tex, float2 uv, float4 e, float4 inv, float4x4 out_m, float4x4 ch)
+			// mode[i]==1 substitutes the sampled channel with constVals[i].
+			float4 PackChannels(sampler2D tex, float2 uv, float4 e, float4 inv, float4x4 out_m, float4x4 ch, float4 constVals, float4 mode)
 			{
 				float4 inColor = tex2D(tex, uv);
 
 				// dot(inColor, ch[i]) picks the channel the user chose for slot i
-				float s0 = dot(inColor, ch[0]);
-				float s1 = dot(inColor, ch[1]);
-				float s2 = dot(inColor, ch[2]);
-				float s3 = dot(inColor, ch[3]);
+				float s0 = lerp(dot(inColor, ch[0]), constVals[0], mode[0]);
+				float s1 = lerp(dot(inColor, ch[1]), constVals[1], mode[1]);
+				float s2 = lerp(dot(inColor, ch[2]), constVals[2], mode[2]);
+				float s3 = lerp(dot(inColor, ch[3]), constVals[3], mode[3]);
 
 				float4 r = (inv[0] ? 1 - s0 : s0) * out_m[0] * e.r;
 				float4 g = (inv[1] ? 1 - s1 : s1) * out_m[1] * e.g;
@@ -105,10 +117,10 @@ Shader "Hidden/TexturePacker"
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float4 c00 = PackChannels(_Input00Tex, i.uv, _Input00In, _Input00Inv, _Input00Out, _Input00Ch);
-				float4 c01 = PackChannels(_Input01Tex, i.uv, _Input01In, _Input01Inv, _Input01Out, _Input01Ch);
-				float4 c02 = PackChannels(_Input02Tex, i.uv, _Input02In, _Input02Inv, _Input02Out, _Input02Ch);
-				float4 c03 = PackChannels(_Input03Tex, i.uv, _Input03In, _Input03Inv, _Input03Out, _Input03Ch);
+				float4 c00 = PackChannels(_Input00Tex, i.uv, _Input00In, _Input00Inv, _Input00Out, _Input00Ch, _Input00Const, _Input00Mode);
+				float4 c01 = PackChannels(_Input01Tex, i.uv, _Input01In, _Input01Inv, _Input01Out, _Input01Ch, _Input01Const, _Input01Mode);
+				float4 c02 = PackChannels(_Input02Tex, i.uv, _Input02In, _Input02Inv, _Input02Out, _Input02Ch, _Input02Const, _Input02Mode);
+				float4 c03 = PackChannels(_Input03Tex, i.uv, _Input03In, _Input03Inv, _Input03Out, _Input03Ch, _Input03Const, _Input03Mode);
 				float4 result = c00 + c01 + c02 + c03;
 				result.a = lerp(1.0, result.a, _HasAlphaInput);
 

@@ -10,7 +10,7 @@ namespace TexPacker
         private Vector4 _channelMask = Vector4.one;
         private Button _rgbaBtn;
         private readonly Button[] _channelButtons = new Button[4];
-        private int _renderResolution = 128;
+        private int _renderResolution = 512;
         private Image _previewImage;
         private RenderTexture _previewRT;
         private Texture2D _checkerTex;

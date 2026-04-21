@@ -50,6 +50,7 @@ namespace TexPacker
             var headerRow = new VisualElement();
             headerRow.AddToClassList("channel-row");
             headerRow.Add(Spacer("channel-enable"));
+            headerRow.Add(Spacer("channel-mode"));
             headerRow.Add(ColHeader("From", "channel-source"));
             headerRow.Add(Spacer("channel-arrow"));
             headerRow.Add(ColHeader("To",   "channel-output"));
@@ -69,25 +70,52 @@ namespace TexPacker
                 // Enable checkbox — clicking it enables/disables this slot
                 var enableToggle = new Toggle { value = channelInput.enabled };
                 enableToggle.AddToClassList("channel-enable");
-                enableToggle.RegisterValueChangedCallback(e =>
-                {
-                    channelInput.enabled = e.newValue;
-                    if (e.newValue) row.RemoveFromClassList("ch-disabled");
-                    else            row.AddToClassList("ch-disabled");
-
-                    onChanged?.Invoke(this);
-                });
                 row.Add(enableToggle);
 
-                // Source channel selector
-                var sourceField = new PopupField<string>(ChannelChoices, (int)channelInput.sourceChannel);
-                sourceField.AddToClassList("channel-source");
-                sourceField.RegisterValueChangedCallback(e =>
+                // Mode toggle — switches source between texture sample and constant value
+                var modeBtn = new Button { text = ModeLabel(channelInput.sourceMode) };
+                modeBtn.AddToClassList("channel-mode");
+                modeBtn.SetEnabled(channelInput.enabled);
+                row.Add(modeBtn);
+
+                // Source column — holds either the source-channel popup or a constant slider
+                var sourceContainer = new VisualElement();
+                sourceContainer.AddToClassList("channel-source");
+                sourceContainer.SetEnabled(channelInput.enabled);
+
+                var sourcePopup = new PopupField<string>(ChannelChoices, (int)channelInput.sourceChannel);
+                sourcePopup.RegisterValueChangedCallback(e =>
                 {
                     channelInput.sourceChannel = (TextureChannel)ChannelChoices.IndexOf(e.newValue);
                     onChanged?.Invoke(this);
                 });
-                row.Add(sourceField);
+
+                var constSlider = new Slider(0f, 1f) { value = channelInput.constantValue, showInputField = true };
+                constSlider.RegisterValueChangedCallback(e =>
+                {
+                    channelInput.constantValue = e.newValue;
+                    onChanged?.Invoke(this);
+                });
+
+                void RefreshSource()
+                {
+                    sourceContainer.Clear();
+                    sourceContainer.Add(channelInput.sourceMode == ChannelSourceMode.Constant
+                        ? (VisualElement)constSlider
+                        : sourcePopup);
+                    modeBtn.text = ModeLabel(channelInput.sourceMode);
+                }
+                RefreshSource();
+                row.Add(sourceContainer);
+
+                modeBtn.clicked += () =>
+                {
+                    channelInput.sourceMode = channelInput.sourceMode == ChannelSourceMode.Constant
+                        ? ChannelSourceMode.FromTexture
+                        : ChannelSourceMode.Constant;
+                    RefreshSource();
+                    onChanged?.Invoke(this);
+                };
 
                 var arrow = new Label("▶");
                 arrow.AddToClassList("channel-arrow");
@@ -96,6 +124,7 @@ namespace TexPacker
                 // Output channel selector
                 var outputField = new PopupField<string>(ChannelChoices, (int)channelInput.output);
                 outputField.AddToClassList("channel-output");
+                outputField.SetEnabled(channelInput.enabled);
                 outputField.RegisterValueChangedCallback(e =>
                 {
                     channelInput.output = (TextureChannel)ChannelChoices.IndexOf(e.newValue);
@@ -106,11 +135,24 @@ namespace TexPacker
                 // Invert toggle
                 var invertToggle = new Toggle { value = channelInput.invert };
                 invertToggle.AddToClassList("channel-invert");
+                invertToggle.SetEnabled(channelInput.enabled);
                 invertToggle.RegisterValueChangedCallback(e => {
                     channelInput.invert = e.newValue;
                     onChanged?.Invoke(this);
                 });
                 row.Add(invertToggle);
+
+                enableToggle.RegisterValueChangedCallback(e =>
+                {
+                    channelInput.enabled = e.newValue;
+                    if (e.newValue) row.RemoveFromClassList("ch-disabled");
+                    else            row.AddToClassList("ch-disabled");
+                    modeBtn.SetEnabled(e.newValue);
+                    sourceContainer.SetEnabled(e.newValue);
+                    outputField.SetEnabled(e.newValue);
+                    invertToggle.SetEnabled(e.newValue);
+                    onChanged?.Invoke(this);
+                });
 
                 foldout.Add(row);
             }
@@ -135,5 +177,7 @@ namespace TexPacker
             l.AddToClassList("col-header");
             return l;
         }
+
+        private static string ModeLabel(ChannelSourceMode m) => m == ChannelSourceMode.Constant ? "#" : "C";
     }
 }
