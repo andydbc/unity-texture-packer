@@ -12,8 +12,9 @@ namespace TexPacker
         private const int ResolutionMin = 64;
         private const int ResolutionMax = 8192;
 
-        private TextureFormat _textureFormat = TextureFormat.PNG;
-        private TexturePacker _texturePacker;
+        [SerializeField] private TextureFormat _textureFormat = TextureFormat.PNG;
+        [SerializeField] private TexturePacker _texturePacker;
+
         private TexturePreview _texturePreview;
         private List<TextureItem> _items;
         private VisualElement _inputsContainer;
@@ -26,7 +27,7 @@ namespace TexPacker
 
         public void CreateGUI()
         {
-            _texturePacker = new TexturePacker();
+            if (_texturePacker == null) _texturePacker = new TexturePacker();
             _texturePacker.Initialize();
             _items = new List<TextureItem>();
 
@@ -76,6 +77,7 @@ namespace TexPacker
             _resValue.AddToClassList("info-row__value");
             resRow.Add(_resValue);
             optionsBody.Add(resRow);
+            
 
             _resWarning = new Label("⚠  Inputs have different resolutions — content will be resampled.");
             _resWarning.AddToClassList("res-warning");
@@ -85,6 +87,18 @@ namespace TexPacker
             var generateBtn = new Button(GenerateTexture) { text = "Export" };
             generateBtn.AddToClassList("generate-btn");
             scroll.Add(generateBtn);
+
+            // Restore UI rows from any inputs persisted across a domain reload.
+            foreach (var input in _texturePacker.texInputs)
+            {
+                var item = new TextureItem(input, RemoveItem, OnTextureInputChanged);
+                _items.Add(item);
+                _inputsContainer.Add(item.Root);
+            }
+            _addButton.SetEnabled(_items.Count < MaxInputCount);
+            ApplyAutoResolution();
+            CheckResolutionMismatch();
+            _texturePreview.Update();
         }
 
         private static VisualElement MakeSection(string title, out VisualElement body)

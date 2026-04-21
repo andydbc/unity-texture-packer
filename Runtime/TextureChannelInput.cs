@@ -1,3 +1,5 @@
+using System;
+
 namespace TexPacker
 {
     public enum ChannelSourceMode
@@ -6,6 +8,7 @@ namespace TexPacker
         Constant
     }
 
+    [Serializable]
     public class TextureChannelInput
     {
         public bool enabled;

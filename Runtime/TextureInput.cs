@@ -1,30 +1,31 @@
-﻿using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace TexPacker
 {
+    [Serializable]
     public class TextureInput
     {
         public Texture2D texture;
 
-        private Dictionary<TextureChannel, TextureChannelInput> _inputs = new Dictionary<TextureChannel, TextureChannelInput>();
+        [SerializeField]
+        private TextureChannelInput[] _inputs;
 
         public TextureInput()
         {
-            _inputs[TextureChannel.ChannelRed]   = new TextureChannelInput() { sourceChannel = TextureChannel.ChannelRed,   output = TextureChannel.ChannelRed,   enabled = true };
-            _inputs[TextureChannel.ChannelGreen] = new TextureChannelInput() { sourceChannel = TextureChannel.ChannelGreen, output = TextureChannel.ChannelGreen, enabled = true };
-            _inputs[TextureChannel.ChannelBlue]  = new TextureChannelInput() { sourceChannel = TextureChannel.ChannelBlue,  output = TextureChannel.ChannelBlue,  enabled = true };
-            _inputs[TextureChannel.ChannelAlpha] = new TextureChannelInput() { sourceChannel = TextureChannel.ChannelAlpha, output = TextureChannel.ChannelAlpha, enabled = false };
+            _inputs = new TextureChannelInput[4];
+            for (int i = 0; i < 4; i++)
+            {
+                _inputs[i] = new TextureChannelInput
+                {
+                    sourceChannel = (TextureChannel)i,
+                    output        = (TextureChannel)i,
+                    enabled       = i != (int)TextureChannel.ChannelAlpha,
+                };
+            }
         }
 
-        public TextureChannelInput GetChannelInput(TextureChannel channel)
-        {
-            return _inputs[channel];
-        }
-
-        public void SetChannelInput(TextureChannel channel, TextureChannelInput channelInput)
-        {
-            _inputs[channel] = channelInput;
-        }
+        public TextureChannelInput GetChannelInput(TextureChannel channel) => _inputs[(int)channel];
+        public void SetChannelInput(TextureChannel channel, TextureChannelInput channelInput) => _inputs[(int)channel] = channelInput;
     }
 }

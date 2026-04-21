@@ -1,14 +1,16 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace TexPacker
 {
+    [Serializable]
     public class TexturePacker
     {
-        private readonly string _shaderName = "Hidden/TexturePacker";
-        private Material _material;
+        private const string ShaderName = "Hidden/TexturePacker";
+        [NonSerialized] private Material _material;
 
-        private List<TextureInput> _texInputs = new List<TextureInput>();
+        [SerializeField] private List<TextureInput> _texInputs = new List<TextureInput>();
         public List<TextureInput> texInputs => _texInputs;
 
         public int resolution  = 512;  // used by preview
@@ -20,7 +22,7 @@ namespace TexPacker
         {
             if (_material == null)
             {
-                _material = new Material(Shader.Find(_shaderName));
+                _material = new Material(Shader.Find(ShaderName));
                 _material.hideFlags = HideFlags.HideAndDontSave;
             }
         }
