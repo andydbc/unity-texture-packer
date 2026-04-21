@@ -5,6 +5,6 @@
   "licensesUrl": "https://github.com/andydbc/unity-texture-packer/blob/master/LICENSE",
   "license": "MIT",
   "name": "com.andbc.texturepacker",
-  "version": "2.0.3",
+  "version": "2.0.5",
   "unity": "6000.0"
 }
