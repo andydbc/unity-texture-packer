@@ -2,7 +2,9 @@
   "author": "Andy Duboc",
   "description": "Tool used to merge arbitary texture channels in one texture ouput.",
   "displayName": "Texture Packer",
+  "licensesUrl": "https://github.com/andydbc/unity-texture-packer/blob/master/LICENSE",
   "license": "MIT",
   "name": "com.andbc.texturepacker",
-  "version": "2.0.1"
+  "version": "2.0.3",
+  "unity": "6000.0"
 }
