@@ -2,7 +2,7 @@
 
 Utility to merge different texture channels into a final texture output.
 
-![screenshot](Screenshots/banner.png)
+![screenshot](./Screenshots/banner.png)
 
 ## Install
 
