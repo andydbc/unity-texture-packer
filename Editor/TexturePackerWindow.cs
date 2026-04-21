@@ -1,141 +1,236 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace TexPacker
 {
     public class TexturePackerWindow : EditorWindow
     {
-        private readonly string _windowTitle = "Channel Packer";
-        private readonly Vector2 _windowSize = new Vector2(300, 450);
-        private readonly int _maxInputCount = 4;
-        private readonly int _textureSupportedResolutionMin = 64;
-        private readonly int _textureSupportedResolutionMax = 8192;
+        private const int MaxInputCount = 4;
+        private const int ResolutionMin = 64;
+        private const int ResolutionMax = 8192;
 
-        Vector2 _windowScrollPos;
+        [SerializeField] private TextureFormat _textureFormat = TextureFormat.PNG;
+        [SerializeField] private TexturePacker _texturePacker;
 
-        private TextureFormat _textureFormat = TextureFormat.PNG;
+        private TexturePreview _texturePreview;
+        private List<TextureItem> _items;
+        private VisualElement _inputsContainer;
+        private Button _addButton;
+        private Label _resValue;
+        private Label _resWarning;
 
-        private TexturePacker _texturePacker = new TexturePacker();
+        [MenuItem("Window/Texture Packer")]
+        static void Open() => GetWindow<TexturePackerWindow>().titleContent = new GUIContent("Texture Packer");
 
-        private List<int> _textureResolutions = new List<int>();
-        private List<string> _textureResolutionsNames = new List<string>();
-
-        private List<TextureItem> _items = new List<TextureItem>();
-        private TexturePreview _preview;
-
-        [MenuItem("Window/Channel Packer")]
-        static void Open()
+        public void CreateGUI()
         {
-            TexturePackerWindow window = GetWindow<TexturePackerWindow>();
-            window.Initialize();
-        }
-
-        public void Initialize()
-        {
-            minSize = _windowSize;
-            titleContent = new GUIContent(_windowTitle);
-
-            for(int i = _textureSupportedResolutionMin; i <= _textureSupportedResolutionMax; i *= 2)
-            {
-                _textureResolutions.Add(i);
-                _textureResolutionsNames.Add(i.ToString());
-            }
-
+            if (_texturePacker == null) _texturePacker = new TexturePacker();
             _texturePacker.Initialize();
-            _preview = new TexturePreview();
+            _items = new List<TextureItem>();
+
+            minSize = new Vector2(360, 500);
+
+            var root = rootVisualElement;
+            var styleSheet = Resources.Load<StyleSheet>("TexturePacker");
+            if (styleSheet != null) root.styleSheets.Add(styleSheet);
+
+            var scroll = new ScrollView(ScrollViewMode.Vertical);
+            root.Add(scroll);
+
+            // Inputs
+            scroll.Add(MakeSection("Inputs", out var inputsBody));
+            _inputsContainer = new VisualElement();
+            inputsBody.Add(_inputsContainer);
+            _addButton = new Button(AddInput) { text = "+" };
+            _addButton.AddToClassList("center-btn");
+            inputsBody.Add(_addButton);
+
+            // Preview
+            _texturePreview = new TexturePreview(_texturePacker);
+            scroll.Add(_texturePreview.Root);
+            
+            // Options
+            scroll.Add(MakeSection("Options", out var optionsBody));
+
+            var formatField = new EnumField("Format", _textureFormat);
+            formatField.AddToClassList("options-field");
+            formatField.RegisterValueChangedCallback(e => _textureFormat = (TextureFormat)e.newValue);
+            optionsBody.Add(formatField);
+
+            // var bitDepths = new List<int> { 8, 16, 32 };
+            // var bitDepthField = new PopupField<int>("Bit Depth", bitDepths, _texturePacker.bitDepth,
+            //     v => $"{v}-bit", v => $"{v}-bit");
+            // bitDepthField.AddToClassList("options-field");
+            // bitDepthField.RegisterValueChangedCallback(e => _texturePacker.bitDepth = e.newValue);
+            // optionsBody.Add(bitDepthField);
+
+            // Resolution — read-only info row, auto-set from first input
+            var resRow = new VisualElement();
+            resRow.AddToClassList("info-row");
+            var resKey = new Label("Resolution");
+            resKey.AddToClassList("info-row__label");
+            resRow.Add(resKey);
+            _resValue = new Label("—");
+            _resValue.AddToClassList("info-row__value");
+            resRow.Add(_resValue);
+            optionsBody.Add(resRow);
+            
+
+            _resWarning = new Label("⚠  Inputs have different resolutions — content will be resampled.");
+            _resWarning.AddToClassList("res-warning");
+            _resWarning.style.display = DisplayStyle.None;
+            optionsBody.Add(_resWarning);
+
+            var generateBtn = new Button(GenerateTexture) { text = "Export" };
+            generateBtn.AddToClassList("generate-btn");
+            scroll.Add(generateBtn);
+
+            // Restore UI rows from any inputs persisted across a domain reload.
+            foreach (var input in _texturePacker.texInputs)
+            {
+                var item = new TextureItem(input, RemoveItem, OnTextureInputChanged);
+                _items.Add(item);
+                _inputsContainer.Add(item.Root);
+            }
+            _addButton.SetEnabled(_items.Count < MaxInputCount);
+            ApplyAutoResolution();
+            CheckResolutionMismatch();
+            _texturePreview.Update();
         }
 
-        private void RefreshItems()
+        private static VisualElement MakeSection(string title, out VisualElement body)
         {
-            if (_items.Count == 0)
+            var section = new VisualElement();
+            section.AddToClassList("section");
+            var header = new Label(title);
+            header.AddToClassList("section-header");
+            section.Add(header);
+            body = new VisualElement();
+            body.AddToClassList("section-body");
+            section.Add(body);
+            return section;
+        }
+
+        private void AddInput()
+        {
+            if (_items.Count >= MaxInputCount) return;
+            var input = new TextureInput();
+            _texturePacker.Add(input);
+            var item = new TextureItem(input, RemoveItem, OnTextureInputChanged);
+            _items.Add(item);
+            _inputsContainer.Add(item.Root);
+            _addButton.SetEnabled(_items.Count < MaxInputCount);
+        }
+
+        private void RemoveItem(TextureItem item)
+        {
+            _texturePacker.Remove(item.Input);
+            _inputsContainer.Remove(item.Root);
+            _items.Remove(item);
+            _addButton.SetEnabled(_items.Count < MaxInputCount);
+            ApplyAutoResolution();
+            CheckResolutionMismatch();
+
+            _texturePreview.Update();
+
+        }
+
+        private void OnTextureInputChanged(TextureItem _)
+        {
+          ApplyAutoResolution();
+          CheckResolutionMismatch();
+          _texturePreview.Update();
+        }
+
+        private void ApplyAutoResolution()
+        {
+            if(_items.Count == 0) {
+                _texturePacker.width = _texturePacker.height = 512;
+                _resValue.text = "—";
                 return;
-
-            var toDeleteItems = _items.Where(x => x.toDelete==true).ToList();
-            foreach (var item in toDeleteItems)
-            {
-                _texturePacker.Remove(item.input);
-                _items.Remove(item);
             }
+
+            foreach (var item in _items)
+            {
+                if (item.Input.texture == null) continue;
+                int w = Mathf.Clamp(Mathf.ClosestPowerOfTwo(item.Input.texture.width),  ResolutionMin, ResolutionMax);
+                int h = Mathf.Clamp(Mathf.ClosestPowerOfTwo(item.Input.texture.height), ResolutionMin, ResolutionMax);
+                _texturePacker.width  = w;
+                _texturePacker.height = h;
+                _resValue.text = $"{w} × {h}";
+                return;
+            }
+            _resValue.text = "—";
         }
 
-        private void OnGUI()
+        private void CheckResolutionMismatch()
         {
-            _windowScrollPos = EditorGUILayout.BeginScrollView(_windowScrollPos, false, false);
-
-            RefreshItems();
-
-            GUILayout.Label(_windowTitle, TexturePackerStyles.Heading);
-            GUILayout.BeginVertical(TexturePackerStyles.Section);
-
-            GUILayout.Label("Inputs", TexturePackerStyles.Heading);
-            foreach (TextureItem item in _items)
+            int refW = -1, refH = -1;
+            bool mismatch = false;
+            foreach (var item in _items)
             {
-                item.Draw();
+                if (item.Input.texture == null) continue;
+                if (refW < 0) { refW = item.Input.texture.width; refH = item.Input.texture.height; }
+                else if (item.Input.texture.width != refW || item.Input.texture.height != refH)
+                { mismatch = true; break; }
+            }
+            _resWarning.style.display = mismatch ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        private void GenerateTexture()
+        {
+            string defaultPath = Application.dataPath;
+            if (_texturePacker.texInputs.Count > 0 && _texturePacker.texInputs[0].texture != null)
+            {
+                string assetPath = AssetDatabase.GetAssetPath(_texturePacker.texInputs[0].texture);
+                if (!string.IsNullOrEmpty(assetPath))
+                    defaultPath = Path.GetDirectoryName(Path.Combine(Application.dataPath, "..", assetPath));
             }
 
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
+            string ext = _textureFormat.ToString().ToLower();
+            string savePath = EditorUtility.SaveFilePanel("Save Texture", defaultPath, "texture." + ext, ext);
+            if (string.IsNullOrEmpty(savePath)) return;
 
-            GUI.enabled = _items.Count < _maxInputCount;
+            RenderTexture rt = _texturePacker.Create();
 
-            if (GUILayout.Button("+"))
+            var output = new Texture2D(rt.width, rt.height, UnityEngine.TextureFormat.RGBA32, false);
+
+            RenderTexture.active = rt;
+            output.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+            output.Apply();
+            RenderTexture.active = null;
+
+            rt.Release();     Object.DestroyImmediate(rt);
+
+            byte[] bytes = _textureFormat switch
             {
-                TextureInput entry = new TextureInput();
-                _texturePacker.Add(entry);
-                _items.Add(new TextureItem(entry));
-            }
+                TextureFormat.JPG => output.EncodeToJPG(),
+                TextureFormat.EXR => output.EncodeToEXR(),
+                TextureFormat.TGA => output.EncodeToTGA(),
+                _ => output.EncodeToPNG()
+            };
+            Object.DestroyImmediate(output);
+            File.WriteAllBytes(savePath, bytes);
+            AssetDatabase.Refresh();
 
-            GUI.enabled = true;
-
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
-
-            int prevRes = _texturePacker.resolution;
-            _texturePacker.resolution = 128;
-
-            _preview.Draw(_texturePacker);
-
-            _texturePacker.resolution = prevRes;
-
-            GUILayout.Label("Options", TexturePackerStyles.Heading);
-            GUILayout.BeginVertical(TexturePackerStyles.Section);
-            _textureFormat = (TextureFormat)EditorGUILayout.EnumPopup("> Format:", _textureFormat);
-            _texturePacker.resolution = EditorGUILayout.IntPopup("> Resolution:", _texturePacker.resolution, _textureResolutionsNames.ToArray(), _textureResolutions.ToArray());
-            GUILayout.EndVertical();
-
-            if (GUILayout.Button("Generate Texture", TexturePackerStyles.Button))
+            if (_texturePacker.HasAlphaOutput())
             {
-                string defaultPath = Application.dataPath;
-                if(_texturePacker.texInputs.Count > 0 && _texturePacker.texInputs[0].texture != null)
+                string dataPath = Application.dataPath.Replace('\\', '/');
+                string norm = savePath.Replace('\\', '/');
+                if (norm.StartsWith(dataPath))
                 {
-                    string path = AssetDatabase.GetAssetPath(_texturePacker.texInputs[0].texture);
-                    if(path != null && !string.IsNullOrEmpty(path))
+                    string rel = "Assets" + norm.Substring(dataPath.Length);
+                    if (AssetImporter.GetAtPath(rel) is TextureImporter imp)
                     {
-                        path = Path.Combine(Application.dataPath, "..", path);
-                        defaultPath = Path.GetDirectoryName(path);
+                        imp.alphaSource = TextureImporterAlphaSource.FromInput;
+                        imp.alphaIsTransparency = true;
+                        imp.SaveAndReimport();
                     }
                 }
-                string savePath = EditorUtility.SaveFilePanel("Save", defaultPath, "texture.png", _textureFormat.ToString());
-                if (savePath != string.Empty)
-                {
-                    Texture2D output = _texturePacker.Create();
-
-                    if(_textureFormat == TextureFormat.JPG)
-                        File.WriteAllBytes(savePath, output.EncodeToJPG());
-                    else if(_textureFormat == TextureFormat.PNG)
-                        File.WriteAllBytes(savePath, output.EncodeToPNG());
-                    else
-                        File.WriteAllBytes(savePath, output.EncodeToEXR());
-
-                    AssetDatabase.Refresh();
-                }
             }
-
-            GUILayout.EndVertical();
-            EditorGUILayout.EndScrollView();
         }
     }
 }
