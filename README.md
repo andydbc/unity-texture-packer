@@ -2,7 +2,7 @@
 
 Utility to merge different texture channels into a final texture output.
 
-![screenshot](./Docs/banner.png)
+![screenshot](https://github.com/andydbc/unity-texture-packer/blob/master/Docs/banner.png)
 
 ## Install
 
@@ -18,11 +18,11 @@ https://github.com/andydbc/unity-texture-packer.git
 
 1. Open **Project Settings**, find the  **Package Manager** tab amd add the following registry:
 
-![npm-registry](./Docs/npm-registry.png)
+![npm-registry](https://github.com/andydbc/unity-texture-packer/blob/master/Docs/npm-registry.png)
 
 2. Open the **Package Manager** window and find the newly added registry in **My Registries**
 
-![package-manager](./Docs/package-manager.png)
+![package-manager](https://github.com/andydbc/unity-texture-packer/blob/master/Docs/package-manager.png)
 
 Install the tool.
 
