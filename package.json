@@ -5,6 +5,7 @@
   "licensesUrl": "https://github.com/andydbc/unity-texture-packer/blob/master/LICENSE",
   "license": "MIT",
   "name": "com.andbc.texturepacker",
-  "version": "2.0.5",
-  "unity": "6000.0"
+  "version": "2.0.6",
+  "unity": "6000.0",
+  "_upm": { "changelog": "<b>Added</b><br>- Added signing for Unity 6.3." }
 }
